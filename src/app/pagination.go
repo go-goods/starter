@@ -13,8 +13,8 @@ type Pagination struct {
 }
 
 const (
-	perpage = "perpage"
-	current = "page"
+	pagination_perpage = "perpage"
+	pagination_current = "page"
 )
 
 func NewPagination(max int, query url.Values) (p *Pagination) {
@@ -23,11 +23,11 @@ func NewPagination(max int, query url.Values) (p *Pagination) {
 		PerPage: 20,
 		Current: 1,
 	}
-	per_page := query.Get(perpage)
+	per_page := query.Get(pagination_perpage)
 	if n, err := strconv.ParseInt(per_page, 10, 32); err == nil {
 		p.PerPage = int(n)
 	}
-	current := query.Get(current)
+	current := query.Get(pagination_current)
 	if n, err := strconv.ParseInt(current, 10, 32); err == nil {
 		p.Current = int(n)
 	}
@@ -40,6 +40,13 @@ func NewPagination(max int, query url.Values) (p *Pagination) {
 		p.PerPage = 1
 	}
 	return
+}
+
+func (p *Pagination) PageLink(n int) string {
+	return url.Values{
+		pagination_perpage: {fmt.Sprint(p.PerPage)},
+		pagination_current: {fmt.Sprint(n)},
+	}.Encode()
 }
 
 func (p *Pagination) Last() int {
@@ -105,11 +112,4 @@ func (p *Pagination) Range() (low, hi int) {
 	}
 
 	return
-}
-
-func (p *Pagination) PageLink(n int) string {
-	return url.Values{
-		perpage: {fmt.Sprint(p.PerPage)},
-		current: {fmt.Sprint(n)},
-	}.Encode()
 }

@@ -33,6 +33,8 @@ func (c *Context) Close() {
 	//perform any cleanup of resources acquired in init_context
 }
 
+//Called in the base template to flatten all the data into one dictionary
+//to make accessing elements not have to go through the .Data attribute
 func (c *Context) Tmpl() (ret d) {
 	ret = d{}
 	for key, val := range c.Data {

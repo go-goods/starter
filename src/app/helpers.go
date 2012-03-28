@@ -8,8 +8,10 @@ import (
 	"path/filepath"
 )
 
+//pervasive type. convenient to have a short name for it.
 type d map[string]interface{}
 
+//lists of things with easy append/duplicate methdos
 type list []string
 
 func (l *list) Append(val string) {
@@ -24,9 +26,10 @@ func (l list) Dup() (r list) {
 	return
 }
 
+//perform_status runs the passed in status on the request and calls the appropriate block
 func perform_status(w http.ResponseWriter, req *http.Request, status int) (err error) {
 	w.WriteHeader(status)
-	block := fmt.Sprintf(tmpl_root("blocks", "%d.block"), status)
+	block := fmt.Sprintf(tmpl_root("status", "%d.block"), status)
 	err = base_template.Execute(w, init_context(req), block)
 	if err != nil {
 		log.Println(err)
@@ -34,6 +37,8 @@ func perform_status(w http.ResponseWriter, req *http.Request, status int) (err e
 	return
 }
 
+//execute is a convenient shorthand all it does extra is log errors and make the code
+//a little cleaner
 func execute(w http.ResponseWriter, ctx interface{}, blocks ...string) (err error) {
 	if err = base_template.Execute(w, ctx, blocks...); err != nil {
 		log.Println(err)
@@ -41,6 +46,7 @@ func execute(w http.ResponseWriter, ctx interface{}, blocks ...string) (err erro
 	return
 }
 
+//internal_error is what is called when theres an error processing something
 func internal_error(w http.ResponseWriter, req *http.Request, err error) {
 	perform_status(w, req, http.StatusInternalServerError)
 	log.Println("error serving request:", err)
