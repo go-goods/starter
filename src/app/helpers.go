@@ -24,24 +24,25 @@ func (l list) Dup() (r list) {
 	return
 }
 
-func perform_status(w http.ResponseWriter, status int) {
+func perform_status(w http.ResponseWriter, req *http.Request, status int) (err error) {
 	w.WriteHeader(status)
 	block := fmt.Sprintf(tmpl_root("blocks", "%d.block"), status)
-	err := base_template.Execute(w, context, block)
+	err = base_template.Execute(w, init_context(req), block)
 	if err != nil {
 		log.Println(err)
 	}
+	return
 }
 
-func execute(w http.ResponseWriter, blocks ...string) {
-	err := base_template.Execute(w, context, blocks...)
-	if err != nil {
+func execute(w http.ResponseWriter, ctx interface{}, blocks ...string) (err error) {
+	if err = base_template.Execute(w, ctx, blocks...); err != nil {
 		log.Println(err)
 	}
+	return
 }
 
 func internal_error(w http.ResponseWriter, req *http.Request, err error) {
-	perform_status(w, http.StatusInternalServerError)
+	perform_status(w, req, http.StatusInternalServerError)
 	log.Println("error serving request:", err)
 }
 

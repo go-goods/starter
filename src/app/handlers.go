@@ -7,22 +7,23 @@ import (
 	"strconv"
 )
 
-func handle_index(w http.ResponseWriter, req *http.Request) {
+func handle_index(w http.ResponseWriter, req *http.Request, ctx *Context) {
 	if req.URL.Path != "/" {
-		perform_status(w, http.StatusNotFound)
+		perform_status(w, req, http.StatusNotFound)
 		return
 	}
 	w.Header().Set("Content-type", "text/html")
-	execute(w, tmpl_root("blocks", "index.block"))
+	ctx.Set("content", "Content!")
+	execute(w, ctx, tmpl_root("blocks", "index.block"))
 }
 
 //make a silly handler for testing statuses
-func handle_status(w http.ResponseWriter, req *http.Request) {
+func handle_status(w http.ResponseWriter, req *http.Request, ctx *Context) {
 	status, err := strconv.ParseInt(path.Base(req.URL.Path), 10, 32)
 	if err != nil {
 		log.Println(err)
-		perform_status(w, http.StatusNotFound)
+		perform_status(w, req, http.StatusNotFound)
 		return
 	}
-	perform_status(w, int(status))
+	perform_status(w, req, int(status))
 }
