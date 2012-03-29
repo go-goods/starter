@@ -11,7 +11,7 @@ Clone this app into some directory and remove the git directory.
 
     polarna:my-app zeebo$ GOPATH=`pwd` go get -v app
     app
-    polarna:heroku-basic-app zeebo$ PORT=9022 bin/app
+    polarna:my-app zeebo$ PORT=9022 bin/app
 
 Your app is now serving requests on http://localhost:9022
 
